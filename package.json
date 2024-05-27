@@ -1,0 +1,17 @@
+{
+  "name": "artemis-cli",
+  "version": "1.0.0",
+  "description": "CLI tool to manage various tasks",
+  "main": "cli.js",
+  "bin": {
+    "artemis": "./cli.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^8.0.0"
+  }
+}
