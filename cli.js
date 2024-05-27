@@ -24,9 +24,10 @@ function executeApp(appName, update) {
   });
 }
 
+// Function to open a URL
 function openUrl(url) {
-    console.log(`Opening ${url}...`);
-    executeCommand(`open ${url}`, `Error opening ${url}`);
+  console.log(`Opening ${url}...`);
+  executeCommand(`open ${url}`, `Error opening ${url}`);
 }
 
 // Function to create a project
