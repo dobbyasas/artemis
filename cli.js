@@ -127,6 +127,47 @@ function openInVSCode(folderPath) {
   executeCommand(`code ${folderPath}`, 'Error opening VS Code');
 }
 
+// Function to close all applications
+function closeAllApplications() {
+  console.log('Closing all applications...');
+  const closeAppsScript = `
+  tell application "System Events"
+    set the visible of every process to true
+    repeat with proc in (get name of every process whose visible is true and name is not "Finder")
+      try
+        do shell script "killall " & quoted form of proc
+      end try
+    end repeat
+  end tell
+  `;
+  executeCommand(`osascript -e '${closeAppsScript}'`, 'Error closing applications');
+}
+
+// Function to minimize all applications
+function minimizeAllApplications() {
+  console.log('Minimizing all applications...');
+  const minimizeAppsScript = `
+  tell application "System Events"
+    set the visible of every process to true
+    repeat with proc in (get name of every process whose visible is true and name is not "Finder")
+      try
+        set miniaturized of every window of process proc to true
+      end try
+    end repeat
+  end tell
+  `;
+  executeCommand(`osascript -e '${minimizeAppsScript}'`, 'Error minimizing applications');
+}
+
+// Function to minimize all applications and open pornhub.com
+function minimizeAndOpenPornhub() {
+  minimizeAllApplications();
+
+  // Open pornhub.com
+  console.log('Opening pornhub.com...');
+  executeCommand('open https://www.pornhub.com', 'Error opening Pornhub');
+}
+
 // Existing command handlers
 const handlers = {
   runTidal: (options) => executeApp('Tidal', options.update),
@@ -165,6 +206,8 @@ defineCommand('arc', 'Run Arc', handlers.runArc, [], [['-u, --update', 'Run Arc 
 defineCommand('metal', 'Open Songsterr on external monitor and run Gojira X on main screen', handlers.openMetalTime, ['metal time']);
 defineCommand('mcserver', 'Run CurseForge and open Aternos website', handlers.runMcServer, ['mc server'], [['-u, --update', 'Run applications on the default screen']]);
 defineCommand('project', 'Create a new project', createProject);
+defineCommand('close', 'Close all open applications', closeAllApplications);
+defineCommand('horny', 'Minimize all applications and open pornhub.com', minimizeAndOpenPornhub);
 
 program.name('artemis').description('CLI tool to manage various tasks').version('1.0.0');
 
