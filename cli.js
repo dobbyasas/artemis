@@ -1,162 +1,171 @@
 #!/usr/bin/env node
 
 const { program } = require('commander');
-const { exec } = require('child_process');
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
-// Function to run Tidal application
-function runTidal() {
-  console.log('Running Tidal application...');
-  exec('open -a "Tidal"', (err) => {
-    if (err) {
-      console.error('Error running Tidal:', err);
-    }
-  });
+// Helper function to execute a shell command
+function executeCommand(command, errorMessage) {
+  try {
+    execSync(command, { stdio: 'inherit' });
+  } catch (err) {
+    console.error(`${errorMessage}:`, err);
+  }
 }
 
-// Function to open Aternos website
-function openAternos() {
-  console.log('Opening Aternos website...');
-  exec('open https://aternos.org', (err) => {
-    if (err) {
-      console.error('Error opening Aternos website:', err);
-    }
-  });
+// Function to create a project
+async function createProject() {
+  const inquirer = await import('inquirer');
+  const { projectName, projectType } = await inquirer.default.prompt([
+    {
+      type: 'input',
+      name: 'projectName',
+      message: 'Enter project name:',
+    },
+    {
+      type: 'list',
+      name: 'projectType',
+      message: 'Select project type:',
+      choices: ['React', 'Angular', 'Other'],
+    },
+  ]);
+
+  const projectPath = path.join(process.cwd(), projectName);
+
+  if (projectType === 'React') {
+    createReactProject(projectName, projectPath);
+  } else if (projectType === 'Angular') {
+    createAngularProject(projectName, projectPath);
+  } else {
+    createOtherProject(projectName, projectPath);
+  }
+
+  // Open the project in VS Code
+  openInVSCode(projectPath);
 }
 
-// Function to run League of Legends
-function runLoL() {
-  console.log('Running League of Legends...');
-  exec('open -a "Riot Client"', (err) => {
-    if (err) {
-      console.error('Error running League of Legends:', err);
-    }
-  });
+// Function to create a React project
+function createReactProject(projectName, projectPath) {
+  console.log(`Creating React project: ${projectName}...`);
+  executeCommand(`npx create-react-app ${projectName}`, 'Error creating React app');
+
+  // Remove specified files
+  const filesToRemove = [
+    'public/favicon.ico',
+    'public/logo192.png',
+    'public/logo512.png',
+    'public/robots.txt',
+    'src/App.test.js',
+    'src/logo.svg',
+    'src/reportWebVitals.js',
+    'src/setupTests.js',
+    'README.md',
+  ];
+  filesToRemove.forEach((file) => fs.unlinkSync(path.join(projectPath, file)));
+
+  // Update src/index.js
+  const indexJsContent = `
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+  `;
+  fs.writeFileSync(path.join(projectPath, 'src/index.js'), indexJsContent.trim());
+
+  // Update src/App.js
+  const appJsContent = `
+import './App.scss';
+
+function App() {
+  return (
+    <div className="App">
+    </div>
+  );
 }
 
-// Function to run CurseForge
-function runCurseForge() {
-  console.log('Running CurseForge...');
-  exec('open -a "CurseForge"', (err) => {
-    if (err) {
-      console.error('Error running CurseForge:', err);
-    }
-  });
+export default App;
+  `;
+  fs.writeFileSync(path.join(projectPath, 'src/App.js'), appJsContent.trim());
+
+  // Rename App.js to App.jsx and App.css to App.scss
+  fs.renameSync(path.join(projectPath, 'src/App.js'), path.join(projectPath, 'src/App.jsx'));
+  fs.renameSync(path.join(projectPath, 'src/App.css'), path.join(projectPath, 'src/App.scss'));
+
+  // Create additional folders
+  const foldersToCreate = ['components', 'pages', 'styles'];
+  foldersToCreate.forEach((folder) => fs.mkdirSync(path.join(projectPath, 'src', folder)));
+
+  // Install additional packages
+  executeCommand('npm install react-router-dom sass', 'Error installing additional packages');
 }
 
-// Function to run Archetype Tim Henson
-function openRockTime() {
-  console.log('Opening Songsterr and running Archetype Tim Henson...');
-  exec('open https://www.songsterr.com', (err) => {
-    if (err) {
-      console.error('Error opening Songsterr:', err);
-    }
-  });
-  exec('open -a "Archetype Tim Henson"', (err) => {
-    if (err) {
-      console.error('Error running Archetype Tim Henson:', err);
-    }
-  });
+// Function to create an Angular project
+function createAngularProject(projectName, projectPath) {
+  console.log(`Creating Angular project: ${projectName}...`);
+  executeCommand(`ng new ${projectName} --directory ${projectPath}`, 'Error creating Angular app');
 }
 
-// Function to run Wargaming.net Game Center
-function runWGC() {
-  console.log('Running Wargaming.net Game Center...');
-  exec('open -a "Wargaming.net Game Center"', (err) => {
-    if (err) {
-      console.error('Error running Wargaming.net Game Center:', err);
-    }
-  });
+// Function to create an "Other" project
+function createOtherProject(projectName, projectPath) {
+  console.log(`Creating Other project: ${projectName}...`);
+  fs.mkdirSync(projectPath);
+  process.chdir(projectPath);
+  executeCommand('git init', 'Error initializing git repository');
 }
 
-// Function to run Discord
-function runDiscord() {
-  console.log('Running Discord...');
-  exec('open -a "Discord"', (err) => {
-    if (err) {
-      console.error('Error running Discord:', err);
-    }
-  });
+// Function to open a folder in VS Code
+function openInVSCode(folderPath) {
+  console.log(`Opening project in VS Code: ${folderPath}...`);
+  executeCommand(`code ${folderPath}`, 'Error opening VS Code');
 }
 
-// Function to run Arc
-function runArc() {
-  console.log('Running Arc...');
-  exec('open -a "Arc"', (err) => {
-    if (err) {
-      console.error('Error running Arc:', err);
-    }
-  });
+// Existing command handlers
+const handlers = {
+  runTidal: (options) => executeApp('Tidal', options.update),
+  openAternos: () => openUrl('https://aternos.org'),
+  runLoL: (options) => executeApp('Riot Client', options.update),
+  runCurseForge: (options) => executeApp('CurseForge', options.update),
+  runWGC: (options) => executeApp('Wargaming.net Game Center', options.update),
+  runDiscord: (options) => executeApp('Discord', options.update),
+  runArc: (options) => executeApp('Arc', options.update),
+  openMetalTime: () => {
+    console.log('Opening Songsterr on external monitor and running Gojira X on main screen...');
+    openUrl('https://www.songsterr.com');
+    executeApp('Archetype Gojira X', false);
+  },
+  runMcServer: (options) => {
+    handlers.runCurseForge(options);
+    handlers.openAternos();
+  },
+};
+
+// Define commands with aliases
+function defineCommand(name, description, handler, aliases = [], options = []) {
+  const cmd = program.command(name).description(description).action(handler);
+  aliases.forEach(alias => cmd.alias(alias));
+  options.forEach(([option, description]) => cmd.option(option, description));
 }
 
-// Function to open Songsterr on the external monitor and run Gojira X on the main screen
-function openMetalTime() {
-  console.log('Opening Songsterr on external monitor and running Gojira X on main screen...');
+// Command definitions
+defineCommand('tidal', 'Run Tidal application', handlers.runTidal, [], [['-u, --update', 'Run Tidal on the default screen']]);
+defineCommand('aternos', 'Open Aternos website', handlers.openAternos);
+defineCommand('lol', 'Run League of Legends', handlers.runLoL, [], [['-u, --update', 'Run League of Legends on the default screen']]);
+defineCommand('mc', 'Run CurseForge', handlers.runCurseForge, ['minecraft', 'curseforge', 'majnkraft'], [['-u, --update', 'Run CurseForge on the default screen']]);
+defineCommand('wot', 'Run Wargaming.net Game Center', handlers.runWGC, [], [['-u, --update', 'Run Wargaming.net Game Center on the default screen']]);
+defineCommand('dis', 'Run Discord', handlers.runDiscord, ['discord'], [['-u, --update', 'Run Discord on the default screen']]);
+defineCommand('arc', 'Run Arc', handlers.runArc, [], [['-u, --update', 'Run Arc on the default screen']]);
+defineCommand('metal', 'Open Songsterr on external monitor and run Gojira X on main screen', handlers.openMetalTime, ['metal time']);
+defineCommand('mcserver', 'Run CurseForge and open Aternos website', handlers.runMcServer, ['mc server'], [['-u, --update', 'Run applications on the default screen']]);
+defineCommand('project', 'Create a new project', createProject);
 
-  // Open Songsterr on external monitor (assume the external monitor is display 2)
-  exec('open -na "Google Chrome" --args --new-window "https://www.songsterr.com"', (err) => {
-    if (err) {
-      console.error('Error opening Songsterr:', err);
-    } else {
-      // Move Google Chrome to the external monitor (you may need to adjust the display ID)
-      exec('displayplacer "id:<external-monitor-id> res:1920x1080 hz:60 color_depth:8 scaling:on origin:(0,0)"', (err) => {
-        if (err) {
-          console.error('Error moving Songsterr to external monitor:', err);
-        }
-      });
-    }
-  });
-
-  // Open Archetype Gojira X on the main screen
-  exec('open -a "Archetype Gojira"', (err) => {
-    if (err) {
-      console.error('Error running Archetype Gojira:', err);
-    }
-  });
-}
-
-program
-  .name('artemis')
-  .description('CLI tool to manage various tasks')
-  .version('1.0.0');
-
-program
-  .command('tidal')
-  .description('Run Tidal application')
-  .action(runTidal);
-
-program
-  .command('aternos')
-  .description('Open Aternos website')
-  .action(openAternos);
-
-program
-  .command('lol')
-  .description('Run League of Legends')
-  .action(runLoL);
-
-program
-  .command('mc')
-  .description('Run CurseForge')
-  .action(runCurseForge);
-
-program
-  .command('wot')
-  .description('Run Wargaming.net Game Center')
-  .action(runWGC);
-
-program
-  .command('dis')
-  .description('Run Discord')
-  .action(runDiscord);
-
-program
-  .command('arc')
-  .description('Run Arc')
-  .action(runArc);
-
-program
-  .command('metal')
-  .description('Open Songsterr on external monitor and run Gojira X on main screen')
-  .action(openMetalTime);
+program.name('artemis').description('CLI tool to manage various tasks').version('1.0.0');
 
 program.parse(process.argv);
