@@ -14,6 +14,21 @@ function executeCommand(command, errorMessage) {
   }
 }
 
+// Function to execute an app with an optional move to the default screen
+function executeApp(appName, update) {
+  console.log(`Running ${appName} application...`);
+  execSync(`open -a "${appName}"`, (err) => {
+    if (err) {
+      console.error(`Error running ${appName}:`, err);
+    }
+  });
+}
+
+function openUrl(url) {
+    console.log(`Opening ${url}...`);
+    executeCommand(`open ${url}`, `Error opening ${url}`);
+}
+
 // Function to create a project
 async function createProject() {
   const inquirer = await import('inquirer');
@@ -168,6 +183,14 @@ function minimizeAndOpenPornhub() {
   executeCommand('open https://www.pornhub.com', 'Error opening Pornhub');
 }
 
+// Function to open URLs
+function openUrls(urls) {
+  urls.forEach(url => {
+    console.log(`Opening ${url}...`);
+    executeCommand(`open ${url}`, `Error opening ${url}`);
+  });
+}
+
 // Existing command handlers
 const handlers = {
   runTidal: (options) => executeApp('Tidal', options.update),
@@ -185,6 +208,10 @@ const handlers = {
   runMcServer: (options) => {
     handlers.runCurseForge(options);
     handlers.openAternos();
+  },
+  runRanked: (options) => {
+    handlers.runLoL(options);
+    openUrls(['https://loltheory.gg/', 'https://u.gg/', 'https://porofessor.gg/']);
   },
 };
 
@@ -208,6 +235,7 @@ defineCommand('mcserver', 'Run CurseForge and open Aternos website', handlers.ru
 defineCommand('project', 'Create a new project', createProject);
 defineCommand('close', 'Close all open applications', closeAllApplications);
 defineCommand('horny', 'Minimize all applications and open pornhub.com', minimizeAndOpenPornhub);
+defineCommand('ranked', 'Run League of Legends and open related websites', handlers.runRanked);
 
 program.name('artemis').description('CLI tool to manage various tasks').version('1.0.0');
 
