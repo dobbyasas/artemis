@@ -30,6 +30,34 @@ function openUrl(url) {
   executeCommand(`open ${url}`, `Error opening ${url}`);
 }
 
+// Function to play a song on Tidal using AppleScript
+function playSongOnTidal(songName) {
+  console.log(`Playing "${songName}" on Tidal...`);
+  
+  const appleScript = `
+    tell application "Tidal"
+      activate
+      delay 2
+      tell application "System Events"
+        keystroke "f" using {command down}
+        delay 0.5
+        keystroke "a" using {command down}
+        keystroke "${songName}"
+        delay 0.5
+        keystroke return
+        delay 1
+        keystroke return
+      end tell
+    end tell
+  `;
+
+  try {
+    execSync(`osascript -e '${appleScript}'`);
+  } catch (err) {
+    console.error('Error playing song on Tidal:', err);
+  }
+}
+
 // Function to create a project
 async function createProject() {
   const inquirer = await import('inquirer');
@@ -237,6 +265,10 @@ defineCommand('project', 'Create a new project', createProject);
 defineCommand('close', 'Close all open applications', closeAllApplications);
 defineCommand('horny', 'Minimize all applications and open pornhub.com', minimizeAndOpenPornhub);
 defineCommand('ranked', 'Run League of Legends and open related websites', handlers.runRanked);
+defineCommand('play', 'Play a song on Tidal', (name, cmd) => {
+  const songName = cmd.args.join(' ');
+  playSongOnTidal(songName);
+});
 
 program.name('artemis').description('CLI tool to manage various tasks').version('1.0.0');
 
