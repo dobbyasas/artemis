@@ -42,10 +42,12 @@ function playSongOnTidal(songName) {
         keystroke "f" using {command down}
         delay 0.5
         keystroke "a" using {command down}
+        keystroke delete
+        delay 0.5
         keystroke "${songName}"
         delay 0.5
-        keystroke return
-        delay 1
+        keystroke tab
+        delay 0.5
         keystroke return
       end tell
     end tell
@@ -268,6 +270,11 @@ defineCommand('ranked', 'Run League of Legends and open related websites', handl
 defineCommand('play', 'Play a song on Tidal', (name, cmd) => {
   const songName = cmd.args.join(' ');
   playSongOnTidal(songName);
+});
+defineCommand('server', 'Run CurseForge and open Aternos website', handlers.runMcServer);
+defineCommand('search', 'Search on Google', (query, cmd) => {
+  const searchQuery = cmd.args.join(' ');
+  openUrl(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`);
 });
 
 program.name('artemis').description('CLI tool to manage various tasks').version('1.0.0');
