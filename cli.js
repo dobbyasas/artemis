@@ -72,11 +72,8 @@ function playSongOnTidal(songName) {
         keystroke "f" using {command down}
         delay 0.5
         keystroke "a" using {command down}
-        keystroke delete
         delay 0.5
         keystroke "${songName}"
-        delay 0.5
-        keystroke tab
         delay 0.5
         keystroke return
       end tell
@@ -266,6 +263,11 @@ const handlers = {
     openUrl('https://www.songsterr.com');
     executeApp('Archetype Gojira X', false);
   },
+  openRockTime: () => {
+    console.log('Opening Songsterr on external monitor and running Archetype Tim Henson on main screen...');
+    openUrl('https://www.songsterr.com');
+    executeApp('Archetype Tim Henson', false);
+  },
   runMcServer: (options) => {
     handlers.runCurseForge(options);
     handlers.openAternos();
@@ -309,6 +311,7 @@ defineCommand('wot', 'Run Wargaming.net Game Center', handlers.runWGC, [], [['-u
 defineCommand('dis', 'Run Discord', handlers.runDiscord, ['discord'], [['-u, --update', 'Run Discord on the default screen']]);
 defineCommand('arc', 'Run Arc', handlers.runArc, [], [['-u, --update', 'Run Arc on the default screen']]);
 defineCommand('metal', 'Open Songsterr on external monitor and run Gojira X on main screen', handlers.openMetalTime, ['metal time']);
+defineCommand('rock', 'Open Songsterr on external monitor and run Archetype Time Henson on main screen', handlers.openRockTime, ['rock time']);
 defineCommand('mcserver', 'Run CurseForge and open Aternos website', handlers.runMcServer, ['mc server'], [['-u, --update', 'Run applications on the default screen']]);
 defineCommand('project', 'Create a new project', createProject);
 defineCommand('close', 'Close all open applications', closeAllApplications);
