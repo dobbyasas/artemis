@@ -16,6 +16,7 @@
     "commander": "^8.3.0",
     "ffi-napi": "^4.0.3",
     "inquirer": "^9.2.22",
+    "node-fetch": "^3.3.2",
     "react-router-dom": "^6.23.1",
     "ref-napi": "^3.0.3",
     "sass": "^1.77.2"

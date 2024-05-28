@@ -14,6 +14,36 @@ function executeCommand(command, errorMessage) {
   }
 }
 
+// Function to show an announcement
+function showAnnouncement(message) {
+  const appleScript = `
+    display notification "${message}" with title "Artemis"
+  `;
+  try {
+    execSync(`osascript -e '${appleScript}'`);
+  } catch (err) {
+    console.error('Error showing announcement:', err);
+  }
+}
+
+// Function to set a daily reminder
+function setDailyReminder(message, time) {
+  const [hour, minute] = time.split(':').map(Number);
+  const appleScript = `
+    tell application "Reminders"
+      set newReminder to make new reminder with properties {name:"${message}", due date:current date}
+      tell newReminder
+        set due date to (current date) + (${hour} * hours + ${minute} * minutes - (time of (current date)) mod 86400)
+      end tell
+    end tell
+  `;
+  try {
+    execSync(`osascript -e '${appleScript}'`);
+  } catch (err) {
+    console.error('Error setting daily reminder:', err);
+  }
+}
+
 // Function to execute an app with an optional move to the default screen
 function executeApp(appName, update) {
   console.log(`Running ${appName} application...`);
@@ -244,6 +274,23 @@ const handlers = {
     handlers.runLoL(options);
     openUrls(['https://loltheory.gg/', 'https://u.gg/', 'https://porofessor.gg/']);
   },
+  setReminder: async () => {
+    const inquirer = await import('inquirer');
+    const { message, time } = await inquirer.default.prompt([
+      {
+        type: 'input',
+        name: 'message',
+        message: 'What would you like to be reminded of?',
+      },
+      {
+        type: 'input',
+        name: 'time',
+        message: 'At what time? (HH:MM)',
+      },
+    ]);
+    setDailyReminder(message, time);
+    showAnnouncement(`Reminder set for ${time}: ${message}`);
+  },
 };
 
 // Define commands with aliases
@@ -276,6 +323,7 @@ defineCommand('search', 'Search on Google', (query, cmd) => {
   const searchQuery = cmd.args.join(' ');
   openUrl(`https://www.google.com/search?q=${encodeURIComponent(searchQuery)}`);
 });
+defineCommand('remind', 'Set a daily reminder', handlers.setReminder);
 
 program.name('artemis').description('CLI tool to manage various tasks').version('1.0.0');
 
