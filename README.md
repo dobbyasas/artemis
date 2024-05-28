@@ -9,6 +9,7 @@ Artemis is a command-line interface (CLI) tool designed to manage various tasks 
 - **Manage Projects**: Create new projects in React, Angular, or a custom setup.
 - **Automation**: Automate repetitive tasks with simple commands.
 - **Custom Commands**: Easily add new commands to extend functionality.
+- **Pause Media**: Pause any playing media with a simple command.
 
 ## Installation
 
@@ -95,6 +96,13 @@ Once installed, you can use the `artemis` command followed by various subcommand
 - **Play a song on Tidal**:
     ```sh
     artemis play "Song Name"
+    ```
+
+### Searching the Web
+
+- **Search on Google**:
+    ```sh
+    artemis search "Search Query"
     ```
 
 ## Custom Commands
