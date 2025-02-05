@@ -2,6 +2,8 @@
 
 Artemis is a command-line interface (CLI) tool designed to manage various tasks on your macOS system. It provides commands to run applications, open websites, manage projects, and more, all from the terminal.
 
+reset
+
 ## Features
 
 - **Run Applications**: Quickly launch applications like Tidal, Discord, Arc, etc.
