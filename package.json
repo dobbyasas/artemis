@@ -1,6 +1,6 @@
 {
   "name": "artemis-cli",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "CLI tool to manage various tasks",
   "main": "cli.js",
   "bin": {
@@ -12,13 +12,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "child_process": "^1.0.2",
-    "commander": "^8.3.0",
-    "ffi-napi": "^4.0.3",
+    "@google-cloud/speech": "^6.7.0",
+    "commander": "^10.0.0",
     "inquirer": "^9.2.22",
     "node-fetch": "^3.3.2",
+    "node-record-lpcm16": "^1.0.1",
     "react-router-dom": "^6.23.1",
-    "ref-napi": "^3.0.3",
     "sass": "^1.77.2"
   }
 }
